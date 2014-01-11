@@ -7,16 +7,15 @@ python:
 
 # silence a warning message on travis
 install:
-  -
+  - python --version
 
 # the original package does not have any tests, and it would be difficult to
 # write consistent ones, so we only install the package which will make sure
 # the package will compile
 script:
-  - python$TRAVIS_PYTHON_VERSION setup.py clean build
-  - python$TRAVIS_PYTHON_VERSION setup.py clean sdist
-  - python$TRAVIS_PYTHON_VERSION setup.py clean bdist
-  - python$TRAVIS_PYTHON_VERSION setup.py clean bdist_egg
-  - python$TRAVIS_PYTHON_VERSION setup.py clean
-  - pip install .
-  - python$TRAVIS_PYTHON_VERSION -c "import netifaces"
+  - python setup.py clean build
+  - python setup.py clean sdist
+  - python setup.py clean bdist
+  - python setup.py clean bdist_egg
+  - python setup.py clean && pip install .
+  - python -c "import netifaces"
