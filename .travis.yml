@@ -5,8 +5,15 @@ python:
   - 3.2
   - 3.3
 
+install:
+
 # the original package does not have any tests, and it would be difficult to
 # write consistent ones, so we only install the package which will make sure
 # the package will compile
 script:
+  - python$TRAVIS_PYTHON_VERSION setup.py clean build
+  - python$TRAVIS_PYTHON_VERSION setup.py clean sdist
+  - python$TRAVIS_PYTHON_VERSION setup.py clean bdist
+  - python$TRAVIS_PYTHON_VERSION setup.py clean bdist_egg
+  - python$TRAVIS_PYTHON_VERSION clean
   - pip install .
