@@ -53,7 +53,7 @@ I would welcome the oppurtunity to merge both my work and Kevin's into
 netifaces but until that happens I'll be maintaining this package for the 
 foreseable future.
 
-netifaces 0.4
+netifaces 0.9
 =============
 
 1. What is this?
