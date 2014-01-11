@@ -5,7 +5,9 @@ python:
   - 3.2
   - 3.3
 
+# silence a warning message on travis
 install:
+  -
 
 # the original package does not have any tests, and it would be difficult to
 # write consistent ones, so we only install the package which will make sure
