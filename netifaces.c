@@ -414,11 +414,11 @@ compare_bits (const void *pva,
 static int
 add_to_family (PyObject *result, int family, PyObject *dict)
 {
-  if (!PyDict_Size (dict))
-    return TRUE;
-
   PyObject *py_family = PyInt_FromLong (family);
   PyObject *list = PyDict_GetItem (result, py_family);
+
+  if (!PyDict_Size (dict))
+    return TRUE;
 
   if (!py_family) {
     Py_DECREF (dict);
@@ -449,6 +449,7 @@ static PyObject *
 ifaddrs (PyObject *self, PyObject *args)
 {
   const char *ifname;
+  PyObject *dict;
   PyObject *result;
   int found = FALSE;
 #if defined(WIN32)
@@ -726,8 +727,6 @@ ifaddrs (PyObject *self, PyObject *args)
           break;
         }
       }
-
-      PyObject *dict;
 
       dict = PyDict_New ();
 
