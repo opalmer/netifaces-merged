@@ -407,6 +407,7 @@ else:
 
 setup(name='netifaces-merged',
       version=__version__,
+      zip_safe=True,
       description="Portable network interface information.",
       license="MIT License",
       long_description=long_description,
