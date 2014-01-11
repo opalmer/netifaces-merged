@@ -3,7 +3,7 @@ Original Credits
 
 This package is not my own.  Full credit for the original code goes to 
 Alastair Houghton [alastair AT alastairs-place DOT net] for his netifaces 
-pacakge.  Credit also goes to Kevin Kelley [kelleyk AT kelleyk D0T net] for 
+package.  Credit also goes to Kevin Kelley [kelleyk AT kelleyk D0T net] for
 porting the original netifaces code to Python 3.x and creating the 
 netifaces-py3 package.
 
@@ -31,11 +31,11 @@ is replicated.
 
 So why was netifaces-merged created?  There are a few reasons why I've 
 created this package but overall the reasons are cross-platform stability and
-having a single pacakge for Python 2.x and 3.x.
+having a single package for Python 2.x and 3.x.
 
 The first problem when trying to accomplish this was that netifaces 
 contained a bug which broke the Windows build.  I emailed the author about this 
-bug but unfourtnatly never receieved a reply back.  Although there were 
+bug but unfortunately never receieved a reply back.  Although there were
 ways to work around it, such as monkeypatching the source when running one of 
 my setup.py files, I didn't think this was a great solution either for 
 my own libraries or for anyone else that might want to use netifaces in the 
@@ -44,14 +44,14 @@ future.
 Fast forward a few more months and I started working on converting some of my
 libraries to Python 3.x.  Netifaces still had not been updated unfortunately but
 someone, thank you Kevin Kelley, was nice enough to port it to Python 3.  The 
-problem this time was the setup.py wasen't designed to operate in older versions
-of Python and also relied on a module that as of this writing dosen't exist in
+problem this time was the setup.py wasn't designed to operate in older versions
+of Python and also relied on a module that as of this writing doesn't exist in
 PyPi.  In addition to this the existing package in PyPi, which is classed as
 a dumb binary, fails to install into a virtual environment.
 
-I would welcome the oppurtunity to merge both my work and Kevin's into 
+I would welcome the opportunity to merge both my work and Kevin's into
 netifaces but until that happens I'll be maintaining this package for the 
-foreseable future.
+foreseeable future.
 
 netifaces 0.9
 =============
@@ -190,11 +190,9 @@ necessary code.
 
 It's an MIT-style license.  Here goes:
 
-Copyright (c) 2007, 2008 Alastair Houghton
-
-Copyright (c) 2011 Kevin Kelley
-
-Copyright (c) 2013 Oliver Palmer
+| Copyright (c) 2007, 2008 Alastair Houghton
+| Copyright (c) 2011 Kevin Kelley
+| Copyright (c) 2013 Oliver Palmer
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
