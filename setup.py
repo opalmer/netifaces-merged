@@ -1,21 +1,14 @@
-import setuptools
 import os
+import pickle
 import sys
-import distutils.spawn
+from distutils.errors import *
+from textwrap import dedent
+
+import setuptools
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
-from distutils.errors import *
-import pickle
 
-#from six import print_
-if sys.version_info[0] == 3:
-    import builtins
-    print_ = getattr(builtins, "print")
-    del builtins
-else:
-    from minisix import print_
-
-__version__ = "0.8"
+__version__ = "0.9"
 
 # Disable hard links, otherwise building distributions fails on OS X
 try:
@@ -23,22 +16,15 @@ try:
 except:
     pass
 
+libraries = []
+def_macros = [('NETIFACES_VERSION', __version__)]
+
 # On Windows, we need ws2_32 and iphlpapi
-if getattr(sys, 'getwindowsversion', None):
+if os.name == "nt":
     libraries = ['ws2_32', 'iphlpapi']
-    def_macros = [('WIN32', 1)]
-else:
-    mos = getattr(sys, 'platform', None)
-    libraries = []
-    if mos.startswith('sunos'):
-        libraries = ['socket', 'nsl']
-    def_macros = []
-
-def_macros.append(("NETIFACES_VERSION", __version__))
-
-iface_mod = Extension('netifaces', sources=['netifaces.c'],
-                      libraries=libraries,
-                      define_macros=def_macros)
+    def_macros.insert(0, ('WIN32', 1))
+elif sys.platform.startswith("sunos"):
+    libraries += ['socket', 'nsl']
 
 #
 #  There must be a better way to do this...
@@ -54,8 +40,9 @@ class my_build_ext(build_ext):
         self.conftestidx += 1
         if os.path.exists(name):
             os.unlink(name)
+
         thefile = open(name, 'w')
-        print_(contents, file=thefile)
+        thefile.write(contents)
         thefile.close()
 
         sys.stdout.flush()
@@ -90,7 +77,7 @@ class my_build_ext(build_ext):
                             result = True
                         if status != 0:
                             result = False
-                        
+
             finally:
                 os.dup2(mystdout, 1)
                 os.dup2(mystderr, 2)
@@ -114,8 +101,8 @@ class my_build_ext(build_ext):
             results = {}
 
         self.conftestidx = 0
-        
-        print_("checking for getifaddrs...", end=' ')
+
+        sys.stdout.write("checking for getifaddrs...")
 
         result = results.get('have_getifaddrs', None)
         if result is not None:
@@ -127,7 +114,7 @@ class my_build_ext(build_ext):
                 os.makedirs(self.build_temp)
             outname = os.path.join(self.build_temp, 'conftest.out')
             self.ctout = os.open(outname, os.O_RDWR | os.O_CREAT | os.O_TRUNC)
-            testrig = """
+            testrig = dedent("""
             #include <sys/types.h>
             #include <sys/socket.h>
             #include <ifaddrs.h>
@@ -138,21 +125,21 @@ class my_build_ext(build_ext):
               freeifaddrs (addrs);
               return 0;
             }
-            """
+            """)
             if self.test_build(testrig):
                 result = True
             else:
                 result = False
 
         if result:
-            print("found. %s" % cached)
+            sys.stdout.write("found. %s" % cached + os.linesep)
             self.compiler.define_macro('HAVE_GETIFADDRS', 1)
         else:
-            print("not found. %s" % cached)
+            sys.stdout.write("not found. %s" % cached + os.linesep)
 
         results['have_getifaddrs'] = result
 
-        print_("checking for getnameinfo...", end=' ')
+        sys.stdout.write("checking for getnameinfo...")
 
         result = results.get('have_getnameinfo', None)
         if result is not None:
@@ -164,7 +151,7 @@ class my_build_ext(build_ext):
                 os.makedirs(self.build_temp)
             outname = os.path.join(self.build_temp, 'conftest2.out')
             self.ctout = os.open(outname, os.O_RDWR | os.O_CREAT | os.O_TRUNC)
-            testrig = """
+            testrig = dedent("""
             #include <sys/types.h>
             #include <sys/socket.h>
             #include <arpa/inet.h>
@@ -186,22 +173,22 @@ class my_build_ext(build_ext):
 
               return 0;
             }
-            """
+            """)
             if self.test_build(testrig,libraries=libraries):
                 result = True
             else:
                 result = False
 
         if result:
-            print("found. %s" % cached)
+            sys.stdout.write("found. %s" % cached + os.linesep)
             self.compiler.define_macro('HAVE_GETNAMEINFO', 1)
         else:
-            print("not found. %s" % cached)
+            sys.stdout.write("not found. %s" % cached + os.linesep)
 
         results['have_getnameinfo'] = result
 
         if not results['have_getifaddrs']:
-            print_("checking for socket IOCTLs...", end=' ')
+            sys.stdout.write("checking for socket IOCTLs...")
 
             result = results.get('have_socket_ioctls', None)
             if result is not None:
@@ -212,7 +199,8 @@ class my_build_ext(build_ext):
                 if not os.path.exists(self.build_temp):
                     os.makedirs(self.build_temp)
                 outname = os.path.join(self.build_temp, 'conftest3.out')
-                self.ctout = os.open(outname, os.O_RDWR | os.O_CREAT | os.O_TRUNC)
+                self.ctout = os.open(
+                    outname, os.O_RDWR | os.O_CREAT | os.O_TRUNC)
 
                 result = []
                 ioctls = ('SIOCGIFCONF',
@@ -226,16 +214,16 @@ class my_build_ext(build_ext):
                           'SIOCGLIFNUM',
                           'SIOCGLIFCONF',
                           'SIOCGLIFFLAGS')
-                added_includes = ""
-                if mos.startswith('sunos'):
-                    added_includes = """
+                added_includes = ''
+                if sys.platform.startswith("sunos"):
+                    added_includes = dedent("""
                      #include <unistd.h>
                      #include <stropts.h>
                      #include <sys/sockio.h>
-                    """
+                    """)
 
                 for ioctl in ioctls:
-                    testrig = """
+                    testrig = dedent("""
                     #include <sys/types.h>
                     #include <sys/socket.h>
                     #include <sys/ioctl.h>
@@ -251,22 +239,22 @@ class my_build_ext(build_ext):
 
                         return 0;
                     }
-                    """ % { 'ioctl': ioctl , 'addedinc': added_includes}
+                    """) % {"ioctl": ioctl, "addedinc": added_includes}
 
                     if self.test_build(testrig,libraries=libraries):
                         result.append(ioctl)
 
             if result:
-                print("%r. %s" % (result, cached))
+                sys.stdout.write("%r. %s" % (result, cached) + os.linesep)
                 for ioctl in result:
                     self.compiler.define_macro('HAVE_%s' % ioctl, 1)
                 self.compiler.define_macro('HAVE_SOCKET_IOCTLS', 1)
             else:
-                print("not found. %s" % cached)
+                sys.stdout.write("not found. %s" % cached + os.linesep)
 
             results['have_socket_ioctls'] = result
 
-        print_("checking for optional header files...", end=' ')
+        sys.stdout.write("checking for optional header files...")
 
         result = results.get('have_headers', None)
         if result is not None:
@@ -284,29 +272,30 @@ class my_build_ext(build_ext):
                        'linux/dn.h')
 
             for header in headers:
-                testrig = """
+                testrig = dedent("""
                 #include <sys/types.h>
                 #include <sys/socket.h>
                 #include <net/if.h>
                 #include <%s>
                 int main (void) { return 0; }
-                """ % header
+                """ % header)
 
                 if self.test_build(testrig, link=False):
                     result.append(header)
 
         if result:
-            print("%s. %s" % (' '.join(result), cached))
+            sys.stdout.write("%s. %s" % (" ".join(result), cached) + os.linesep)
             for header in result:
                 macro = header.upper().replace('.', '_').replace('/', '_')
                 self.compiler.define_macro('HAVE_%s' % macro, 1)
         else:
-            print("none found. %s" % cached)
+            sys.stdout.write("none found. %s" % cached + os.linesep)
 
         optional_headers = result
         results['have_headers'] = result
 
-        print_("checking whether struct sockaddr has a length field...", end=' ')
+        sys.stdout.write(
+            "checking whether struct sockaddr has a length field...")
 
         result = results.get('have_sockaddr_sa_len', None)
         if result is not None:
@@ -314,7 +303,7 @@ class my_build_ext(build_ext):
         else:
             cached = ''
 
-            testrig = """
+            testrig = dedent("""
             #include <sys/types.h>
             #include <sys/socket.h>
             #include <net/if.h>
@@ -324,15 +313,15 @@ class my_build_ext(build_ext):
               sa.sa_len = 5;
               return 0;
             }
-            """
+            """)
 
             result = self.test_build(testrig)
 
         if result:
-            print('yes. %s' % cached)
+            sys.stdout.write("yes. %s" % cached + os.linesep)
             self.compiler.define_macro('HAVE_SOCKADDR_SA_LEN', 1)
         else:
-            print('no. %s' % cached)
+            sys.stdout.write("no. %s" % cached + os.linesep)
 
         results['have_sockaddr_sa_len'] = result
 
@@ -342,7 +331,8 @@ class my_build_ext(build_ext):
             # however, unfortunately, getifaddrs() doesn't return the
             # lengths, because they're in the sa_len field on just about
             # everything but Linux.
-            print_("checking which sockaddr_xxx structs are defined...", end=' ')
+            sys.stdout.write(
+                "checking which sockaddr_xxx structs are defined...")
             
             result = results.get('have_sockaddrs', None)
             if result is not None:
@@ -353,7 +343,8 @@ class my_build_ext(build_ext):
                 if not os.path.exists(self.build_temp):
                     os.makedirs(self.build_temp)
                 outname = os.path.join(self.build_temp, 'conftest4.out')
-                self.ctout = os.open(outname, os.O_RDWR | os.O_CREAT | os.O_TRUNC)
+                self.ctout = os.open(
+                    outname, os.O_RDWR | os.O_CREAT | os.O_TRUNC)
 
                 sockaddrs = ('at', 'ax25', 'dl', 'eon', 'in', 'in6',
                              'inarp', 'ipx', 'iso', 'ns', 'un', 'x25',
@@ -361,33 +352,34 @@ class my_build_ext(build_ext):
                              'dn', 'irda', 'llc')
                 result = []
                 for sockaddr in sockaddrs:
-                    testrig = """
+                    testrig = dedent("""
                     #include <sys/types.h>
                     #include <sys/socket.h>
                     #include <sys/un.h>
                     #include <net/if.h>
                     #include <netinet/in.h>
                     %(includes)s
-                    
+
                     int main (void) {
                       struct sockaddr_%(sockaddr)s sa;
                       return 0;
                     }
-                    """ % { 'includes': '\n'.join(["#include <%s>" % header
-                                                   for header
-                                                   in optional_headers]),
+                    """) % { 'includes': os.linesep.join(
+                        ['#include <%s>' % header
+                         for header in optional_headers]),
                             'sockaddr': sockaddr }
 
                     if self.test_build(testrig):
                         result.append(sockaddr)
-                
+
             if result:
-                print('%s. %s' % (' '.join(result), cached))
+                sys.stdout.write(
+                    "%s. %s" % (" ".join(result), cached) + os.linesep)
                 for sockaddr in result:
                     self.compiler.define_macro('HAVE_SOCKADDR_%s' \
                                                % sockaddr.upper(), 1)
             else:
-                print('none! %s' % cached)
+                sys.stdout.write("none! %s" % cached + os.linesep)
 
             results['have_sockaddrs'] = result
 
@@ -399,40 +391,40 @@ class my_build_ext(build_ext):
             myfile.close()
 
 # Don't bother detecting socket ioctls on Windows
-if not getattr(sys, 'getwindowsversion', None):
+if os.name != "nt":
     setuptools.command.build_ext.build_ext = my_build_ext
 
-setup (name='netifaces',
-       version=__version__,
-       description="Portable network interface information.",
-       license="MIT License",
-       long_description="""\
-(Python 3.x compatibility added by Kevin Kelley <kelleyk@kelleyk.net>.
-The functionality of the module should remain unchanged.)
+try:
+    dirname = os.path.abspath(os.path.dirname(__file__))
+    readme_filepath = os.path.join(dirname, "README.rst")
+except NameError:
+    readme_filepath = "README.rst"
 
-netifaces provides a (hopefully portable-ish) way for Python programmers to
-get access to a list of the network interfaces on the local machine, and to
-obtain the addresses of those network interfaces.
+if os.path.isfile(readme_filepath):
+    long_description = open(readme_filepath, "r").read()
+else:
+    long_description = ""
 
-The package has been tested on Mac OS X, Windows XP, Windows Vista, Linux
-and Solaris.
-
-It should work on other UNIX-like systems provided they implement
-either getifaddrs() or support the SIOCGIFxxx socket options, although the
-data provided by the socket options is normally less complete.
-""",
-       author='Alastair Houghton',
-       author_email='alastair@alastairs-place.net',
-       url='http://alastairs-place.net/netifaces',
-       classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Topic :: System :: Networking',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        ],
-       ext_modules=[iface_mod])
+setup(name='netifaces-merged',
+      version=__version__,
+      description="Portable network interface information.",
+      license="MIT License",
+      long_description=long_description,
+      author="Oliver Palmer",
+      author_email="opalmer@opalmer.com",
+      url="https://github.com/opalmer/netifaces-merged",
+      classifiers=[
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Developers',
+          'License :: OSI Approved :: MIT License',
+          'Topic :: System :: Networking',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 2.5',
+          'Programming Language :: Python :: 2.6',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3'],
+      ext_modules=[
+          Extension(
+              "netifaces", sources=["netifaces.c"],
+              libraries=libraries, define_macros=def_macros)])
