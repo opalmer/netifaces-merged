@@ -8,7 +8,7 @@ import setuptools
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
-__version__ = "0.9"
+__version__ = "0.9.0"
 
 # Disable hard links, otherwise building distributions fails on OS X
 try:
