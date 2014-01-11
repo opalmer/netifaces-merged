@@ -8,5 +8,5 @@ python:
 # the original package does not have any tests, and it would be difficult to
 # write consistent ones, so we only install the package which will make sure
 # the package will compile
-install:
+script:
   - pip install .
