@@ -449,10 +449,10 @@ static PyObject *
 ifaddrs (PyObject *self, PyObject *args)
 {
   const char *ifname;
-  PyObject *dict;
   PyObject *result;
   int found = FALSE;
 #if defined(WIN32)
+  PyObject *dict;
   PIP_ADAPTER_ADDRESSES pAdapterAddresses = NULL, pInfo = NULL;
   ULONG ulBufferLength = 0;
   DWORD dwRet;
