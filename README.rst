@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/opalmer/netifaces-merged.png?branch=master
+    :target: https://travis-ci.org/opalmer/netifaces-merged
+
 Original Credits
 ================
 
@@ -12,13 +15,15 @@ What's Different
 ================
 
 This package is a fork from https://github.com/kelleyk/py3k-netifaces with
-minor changes.  These changes include an update to setup.py so it should work
-with Python 2.5 without additional dependencies.  netifaces itself included
-support for Python 2.5 and although most of the community has moved on I don't
-want to break existing packages.  There are also some minor to the setup.py that 
-should fix a few rare latest bugs which might break the build.  Finally, this
-package also merges my changes from https://gist.github.com/opalmer/6558607 
-which fixes a compilation bug I encountered on Windows.
+minor changes.  These changes include:
+
+    * A version number that follows the standard major.minor.micro naming spec.
+    * Update to setup.py which fixes some issues with Python 2.5 (the original
+      package support Python 2.5
+    * Removal of minisix as a dependency
+    * merged code from https://gist.github.com/opalmer/6558607 which fixes a
+      bug during compilation on Windows.  This patch was submitted to the
+      original author of netifaces but was never responded to.
 
 
 Why This Package Was Created
@@ -26,35 +31,36 @@ Why This Package Was Created
 
 Normally when problems are encountered in open source Python packages you should
 submit a patch to the author, have it reviewed, and then finally merged.  
-Sometimes this dosen't happen however and for one reason or another the package
-is replicated.
+Sometimes this doesn't happen however and for one reason or another the package
+is replicated, fixed, and then released under another name.
 
 So why was netifaces-merged created?  There are a few reasons why I've 
 created this package but overall the reasons are cross-platform stability and
-having a single package for Python 2.x and 3.x.
+so that a single package can be used across Python versions without the need
+for external dependencies.
 
-The first problem when trying to accomplish this was that netifaces 
-contained a bug which broke the Windows build.  I emailed the author about this 
-bug but unfortunately never receieved a reply back.  Although there were
-ways to work around it, such as monkeypatching the source when running one of 
-my setup.py files, I didn't think this was a great solution either for 
-my own libraries or for anyone else that might want to use netifaces in the 
-future.
+The first problem when trying to accomplish this was that netifaces contained
+a bug which broke the Windows build.  I emailed the author about it and included
+a patch but unfortunately never received a reply back.  Although there were
+ways to work around it, such as monkey patching the source when running one of
+my setup.py files, I didn't think this was a great solution either for my own
+libraries or for anyone else using netifaces in the future.
 
 Fast forward a few more months and I started working on converting some of my
-libraries to Python 3.x.  Netifaces still had not been updated unfortunately but
+libraries to Python 3.x.  netifaces still had not been updated unfortunately but
 someone, thank you Kevin Kelley, was nice enough to port it to Python 3.  The 
 problem this time was the setup.py wasn't designed to operate in older versions
-of Python and also relied on a module that as of this writing doesn't exist in
-PyPi.  In addition to this the existing package in PyPi, which is classed as
-a dumb binary, fails to install into a virtual environment.
+of Python and also relied on a module that as of this writing didn't exist in
+PyPi and was not package with netifaces-py3.  In addition to this the
+existing package in PyPi, which is classed as a dumb binary, failed to install
+into a virtual environment using pip.
 
-I would welcome the opportunity to merge both my work and Kevin's into
-netifaces but until that happens I'll be maintaining this package for the 
-foreseeable future.
+I welcome the opportunity to merge both my work and Kevin's into netifaces
+but until that happens I'll be maintaining this package for the foreseeable
+future.
 
-netifaces 0.9
-=============
+netifaces 0.9.0
+===============
 
 1. What is this?
 ----------------
