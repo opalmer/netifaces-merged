@@ -19,7 +19,7 @@ minor changes.  These changes include:
 
     * A version number that follows the standard major.minor.micro naming spec.
     * Update to setup.py which fixes some issues with Python 2.5 (the original
-      package support Python 2.5
+      package, netifaces, supported Python 2.5)
     * Removal of minisix as a dependency
     * merged code from https://gist.github.com/opalmer/6558607 which fixes a
       bug during compilation on Windows.  This patch was submitted to the
@@ -29,10 +29,11 @@ minor changes.  These changes include:
 Why This Package Was Created
 ============================
 
-Normally when problems are encountered in open source Python packages you should
-submit a patch to the author, have it reviewed, and then finally merged.  
+Normally when problems are encountered in open source projects you should
+submit a patch to the author(s), have it reviewed, and then finally merged.  
 Sometimes this doesn't happen however and for one reason or another the package
-is replicated, fixed, and then released under another name.
+is replicated, fixed, and then released under another name.  This is exactly 
+what happend with netifaces-merged.
 
 So why was netifaces-merged created?  There are a few reasons why I've 
 created this package but overall the reasons are cross-platform stability and
@@ -43,21 +44,22 @@ The first problem when trying to accomplish this was that netifaces contained
 a bug which broke the Windows build.  I emailed the author about it and included
 a patch but unfortunately never received a reply back.  Although there were
 ways to work around it, such as monkey patching the source when running one of
-my setup.py files, I didn't think this was a great solution either for my own
-libraries or for anyone else using netifaces in the future.
+the setup.py files, but I didn't think this was a great solution either for myself
+or anyone else who had to use
 
 Fast forward a few more months and I started working on converting some of my
-libraries to Python 3.x.  netifaces still had not been updated unfortunately but
-someone, thank you Kevin Kelley, was nice enough to port it to Python 3.  The 
+own libraries to Python 3.x.  netifaces still had not been updated unfortunately
+but someone, thank you Kevin Kelley, was nice enough to port it to Python 3.  The 
 problem this time was the setup.py wasn't designed to operate in older versions
-of Python and also relied on a module that as of this writing didn't exist in
-PyPi and was not package with netifaces-py3.  In addition to this the
-existing package in PyPi, which is classed as a dumb binary, failed to install
-into a virtual environment using pip.
+of Python and netifaces-py3 also relied on a module that as of this writing 
+didn't exist in PyPi and was not packaged with netifaces-py3.  In addition to 
+this the existing package in PyPi, which is released as a 'dumb binary', 
+failed to install into a virtual environment using pip.
 
 I welcome the opportunity to merge both my work and Kevin's into netifaces
 but until that happens I'll be maintaining this package for the foreseeable
 future.
+
 
 netifaces 0.9.0
 ===============
