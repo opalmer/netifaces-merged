@@ -1,6 +1,7 @@
-.. image:: https://travis-ci.org/opalmer/netifaces-merged.png?branch=master
-    :target: https://travis-ci.org/opalmer/netifaces-merged
+.. warning::
 
+    **This package is deprecated.  The original netifaces has been updated making this package unnecessary moving forward.**
+    
 Original Credits
 ================
 
@@ -219,3 +220,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+.. warning::
+
+    **This package is deprecated.  The original netifaces has been updated making this package unnecessary moving forward.**
+    
