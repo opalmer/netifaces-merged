@@ -1,4 +1,7 @@
-
+Important Notice
+================
+    
+    **This package is deprecated.  The original netifaces has been updated making this package unnecessary moving forward.**
     
     
 Original Credits
