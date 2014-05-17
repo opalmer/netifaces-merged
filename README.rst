@@ -1,6 +1,5 @@
-.. warning::
 
-    **This package is deprecated.  The original netifaces has been updated making this package unnecessary moving forward.**
+    
     
 Original Credits
 ================
@@ -221,7 +220,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-.. warning::
-
-    **This package is deprecated.  The original netifaces has been updated making this package unnecessary moving forward.**
+Important Notice
+================
     
+    **This package is deprecated.  The original netifaces has been updated making this package unnecessary moving forward.**
